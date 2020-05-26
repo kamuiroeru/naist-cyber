@@ -7,3 +7,5 @@
 # srcフォルダだけ追加
 /src/*
 !/src/.gitkeep
+
+__pycache__
