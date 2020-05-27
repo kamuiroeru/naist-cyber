@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Set
 import gzip
 from os.path import splitext, dirname, abspath, join as pjoin
 from os import chdir
@@ -62,25 +62,34 @@ class CVE:
 
     def __init__(self):
         self._cache: Dict[str, List[dict]] = {}
+        self._year_notfound: Set[str] = set()
 
     def _load(self, year: str):
-        data = load_json(pjoin(self.src_path, self.file_format.format(year)))
+        try:
+            data = load_json(pjoin(self.src_path, self.file_format.format(year)))
+        except FileNotFoundError:
+            self._year_notfound.add(year)
+            return
         cve_items = data['CVE_Items']
         self._cache[year] = cve_items
 
     def _get_cve_year(self, year: str) -> List[dict]:
         if year not in self._cache:
             self._load(year)
-        return self._cache[year]
 
-    def get_item(self, cve_id: str) -> dict:
+        if year in self._year_notfound:
+            return []
+        else:
+            return self._cache[year]
+
+    def get_item(self, cve_id: str) -> Union[CVE_Item, None]:
         year = cve_id.split('-')[1]
         cve_items = self._get_cve_year(year)
         searched_items = list(filter(lambda e:e['cve']['CVE_data_meta']['ID'] == cve_id, cve_items))
         if len(searched_items) == 1:
             return CVE_Item(searched_items[0])
         else:
-            return CVE_Item({})
+            return None
 
 
 if __name__ == "__main__":
