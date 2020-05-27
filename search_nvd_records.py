@@ -1,4 +1,4 @@
-from typing import List, Dict, Set
+from typing import List, Dict, Set, Union
 import gzip
 from os.path import splitext, dirname, abspath, join as pjoin
 from os import chdir
@@ -48,15 +48,22 @@ def search_CVE_records(query: str) -> List[str]:
     Returns:
         List[str] -- [description]
     """
+    print('\r', '    grepping cve list', ' ' * 100, end='')
     commands = [
         'gzip', '-dc', CVE_LIST_PATH, '|',
         'grep', query, '|',
         'cut', '-f1', '-d,'
     ]
-    return getoutput(' '.join(commands)).split('\n')
+    output = getoutput(' '.join(commands))
+
+    # grepがヒットしなくても、 '' が返されるので、検出して除外する
+    if output:
+        return output.split('\n')
+    else:
+        return []
 
 
-class CVE:
+class NVD:
     src_path = './src/'
     file_format = 'nvdcve-1.1-{}.json.gz'
 
@@ -66,7 +73,9 @@ class CVE:
 
     def _load(self, year: str):
         try:
-            data = load_json(pjoin(self.src_path, self.file_format.format(year)))
+            data_file = pjoin(self.src_path, self.file_format.format(year))
+            data = load_json(data_file)
+            print('\r', f'    loading {data_file}', ' ' * 100, end='')
         except FileNotFoundError:
             self._year_notfound.add(year)
             return
@@ -97,7 +106,7 @@ if __name__ == "__main__":
     filename = 'src/nvdcve-1.1-2016.json.gz'
     d = load_json(filename)
     print(d.keys())
-    cve = CVE()
-    c = cve.get_item('CVE-2016-9998')
+    nvd = NVD()
+    c = nvd.get_item('CVE-2016-9998')
     # for e in search_CVE_records('Thunderbird'):
     #     print(e)

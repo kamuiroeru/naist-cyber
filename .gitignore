@@ -9,3 +9,9 @@
 !/src/.gitkeep
 
 __pycache__
+
+result.csv
+result.xlsx
+
+# office系のキャッシュファイル
+~$*

@@ -35,7 +35,7 @@ class CVSS_V3:
 
 class CVSS_V2:
     def __init__(self, base_metric_v2: dict):
-        cvss_v2 = base_metric_v2.get('cvssV3', {})
+        cvss_v2 = base_metric_v2.get('cvssV2', {})
         self.version: str = cvss_v2.get('version', '')
         self.vectorString: str = cvss_v2.get('vectorString', '')
         self.attackVector: str = cvss_v2.get('attackVector', '')
@@ -65,18 +65,20 @@ class CVE_Item:
         return return_list
 
     def __init__(self, raw_dict: dict):
+        self.id: str = ''
         self.overview: str = ''
         self.impact: Dict[str, Dict[str, str]] = {}
-        self.references: List[str]
+        self.references: List[str] = []
         self.vulnerable_software_and_versions: List[str] = []
         self.vulnerability_type: List[str] = []
 
         cve: dict = raw_dict.get('cve', {})
         impact: dict = raw_dict.get('impact', {})
-        references: dict = raw_dict.get('references', {})
+        references: dict = cve.get('references', {})
         configurations: dict = raw_dict.get('configurations', {})
 
         if cve:
+            self.id = cve['CVE_data_meta']['ID']
             self.overview = cve['description']['description_data'][0]['value']
             self.vulnerability_type: List[str] = [e['value'] for e in cve['problemtype']['problemtype_data'][0]['description']]
 
@@ -87,7 +89,7 @@ class CVE_Item:
             }
 
         if references:
-            self.references: List[str] = [data['url'] for data in references.get('references_data', [])]
+            self.references: List[str] = [data['url'] for data in references.get('reference_data', [])]
 
         if configurations:
             for node in configurations.get('nodes', []):
