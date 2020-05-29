@@ -26,4 +26,4 @@ $ python listup.py Thunderbird
 $ python analyze_result.py
 ```
 
-を実行すると、 `pie/` ディレクトリに年ごと、 CSV ごとの 円グラフ ができます。
+を実行すると、 `pie/` ディレクトリに年ごと、 CSV ごとの 円グラフ ができます。この円グラフでは、出現頻度 TOP10 の CWE が色付けされており、これらについての詳細（CWE_ID, 出現回数、CWE詳細ページのリンク英語版&日本語版）は `output/cwe_most_common_10.txt` に出力されます。

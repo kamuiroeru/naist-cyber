@@ -6,9 +6,10 @@ from glob import glob
 import matplotlib.pyplot as plt
 from itertools import cycle
 
-from os.path import abspath, dirname, splitext, basename
+from os.path import abspath, dirname, splitext, basename, join as pjoin
 from sys import path
-path.append(dirname(abspath(__file__)))
+SCRIPT_PATH = dirname(abspath(__file__))
+path.append(SCRIPT_PATH)
 
 from scripts.plot import plot_pie, ValueList, LabelList
 
@@ -67,6 +68,9 @@ def split_data_label_from_counter(counter: Counter) -> [ValueList, LabelList]:
 
 tab10 = plt.get_cmap('tab10')
 gray = cycle(['#343d46','#4f5b66','#65737e','#a7adba','#c0c5ce'])
+template_cwe = 'https://cwe.mitre.org/data/definitions/{}.html'
+template_cwe_jvn = 'https://jvndb.jvn.jp/ja/cwe/CWE-{}.html'
+
 
 
 def plot_pie_by_output():
@@ -83,9 +87,19 @@ def plot_pie_by_output():
     cwe_id_to_color = {key: next(gray) for key, _ in counted_all_cwe.items()}
     ### 出現頻度 top 10 に、matplotlib 標準色を割り当てる（上書きする）
     most_common_10: List[Tuple[str, int]] = counted_all_cwe.most_common(10)
-    for lc, elem in enumerate(most_common_10):
-        mc_cwe_id = elem[0]
-        cwe_id_to_color[mc_cwe_id] = tab10(lc)
+    with open(pjoin(SCRIPT_PATH, 'output', 'cwe_most_common_10.txt'), 'w') as f:
+        for lc, elem in enumerate(most_common_10):
+            # 上位 10 CWE を表示
+            cwe_id = elem[0].split('-')[1]
+            print(elem)
+            f.write(
+                str(elem) + '\n' \
+                + '    ' + template_cwe.format(cwe_id) + '\n' \
+                + '    ' + template_cwe_jvn.format(cwe_id) + '\n' \
+            )
+            # 割り当て
+            mc_cwe_id = elem[0]
+            cwe_id_to_color[mc_cwe_id] = tab10(lc)
 
     for year, counter in counted_y2c.items():
         vl, ll = split_data_label_from_counter(counter)
