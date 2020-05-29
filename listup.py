@@ -1,13 +1,22 @@
 from typing import List, Union
-from classes import CVE_Item, CVSS_V3, CVSS_V2
-from search_nvd_records import (
-    NVD, search_CVE_records
-)
 import pandas as pd
 from argparse import ArgumentParser, Namespace
 
+from os import chdir
+from os.path import dirname, abspath, join as pjoin
+
+SCRIPT_PATH = dirname(abspath(__file__))
+# どこから実行してもOK
+chdir(SCRIPT_PATH)
+
+from scripts.classes import CVE_Item, CVSS_V3, CVSS_V2
+from scripts.search_nvd_records import (
+    NVD, search_CVE_records
+)
 
 nvd = NVD()
+OUTPUT_DIR = pjoin(SCRIPT_PATH, 'output')
+
 
 def listup_records(query: str) -> List[CVE_Item]:
     """投げられたクエリを検索し、CVE_Item のリストを返す
@@ -64,6 +73,7 @@ def create_parser() -> Namespace:
     parser = ArgumentParser(description='nvd のデータを抽出して表にまとめる')
 
     parser.add_argument('query', nargs='+', help='検索語句（スペース区切りで複数指定可能）')
+    parser.add_argument('--out', '-o', help='output file name', default='result')
 
     return parser.parse_args()
 
@@ -72,6 +82,7 @@ if __name__ == "__main__":
     args = create_parser()
 
     query: List[str] = args.query
+    out: str = args.out
     l: List[CVE_Item] = []
     for q in query:
         print(q, ':')
@@ -82,8 +93,8 @@ if __name__ == "__main__":
         print('[Warning] entries not found')
     else:
         df = to_dataframe(l)
-        df.to_csv('result.csv')
-        with pd.ExcelWriter('result.xlsx', engine='xlsxwriter') as excel:
+        df.to_csv(pjoin(OUTPUT_DIR, f'{out}.csv'))
+        with pd.ExcelWriter(pjoin(OUTPUT_DIR, f'{out}.xlsx'), engine='xlsxwriter') as excel:
             excel.book.add_format({'text_wrap': True})
             df.to_excel(excel)
         print(f'output {len(l)} entries')

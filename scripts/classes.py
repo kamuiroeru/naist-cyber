@@ -1,4 +1,5 @@
 from typing import List
+from pprint import pprint
 
 class CVSS_V3:
     ENUM = {
@@ -97,4 +98,8 @@ class CVE_Item:
                     for c_node in node['children']:
                         self.vulnerable_software_and_versions.extend(self.__parse_cpe(c_node['cpe_match']))
                 else:
-                    self.vulnerable_software_and_versions.extend(self.__parse_cpe(node['cpe_match']))
+                    # 何故か cpe_match が無い場合があるので回避
+                    try:
+                        self.vulnerable_software_and_versions.extend(self.__parse_cpe(node['cpe_match']))
+                    except KeyError as e:
+                        pass

@@ -5,12 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "listup.py",
             "type": "python",
             "request": "launch",
             "program": "listup.py",
             "console": "integratedTerminal",
             "args": ["Thunderbird"]
+        },
+        {
+            "name": "analyze output",
+            "type": "python",
+            "request": "launch",
+            "program": "analyze_result.py",
+            "console": "integratedTerminal"
         }
     ]
 }

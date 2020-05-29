@@ -1,11 +1,29 @@
 # サイバーセキュリティ Assignment1
 ## requirements
 - python 3.6>
+    - pandas
+    - requests
+    - matplotlib
+    - tqdm
+- Internet Connection: CVE の検索と NIST CVD の Data feeds をダウンロードするために必要です。
+- 最低で 50MB 程度の空き領域: CVD の データベースを保存するために必要です。
+    - csv と xlsx と pdf を保存するために 追加で 50MB ほどあると安心です。
 
 ## How To Use
-src/に以下を追加する（個別にダウンロードしてきてください）
+`Thunderbird` の脆弱性についてリストアップする場合、まず以下を実行します。
+※ 最初期の実行では、 NVD Data Feeds をダウンロードし、データベース(実際はただのdictですが)を構築するので、2分ほど時間がかかります。
 
-- CVE List Data [allitems.csv.gz](https://cve.mitre.org/data/downloads/allitems.csv.gz)
-- NVD Data Feeds（複数可能）
-    - nvdcve-1.1-[year].json.gz
-- CAPEC List Mechanisms of Attack [1000.csv.zip](https://capec.mitre.org/data/csv/1000.csv.zip)
+```sh
+$ python listup.py Thunderbird
+```
+
+`output/` ディレクトリに、 `result.csv` と `result.xlsx` ができます。
+(References のURL が多すぎると Warning が出ますが気にしないでOKだと思います。)
+
+また、
+
+```sh
+$ python analyze_result.py
+```
+
+を実行すると、 `pie/` ディレクトリに年ごと、 CSV ごとの 円グラフ ができます。
