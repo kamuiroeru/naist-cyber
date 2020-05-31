@@ -17,8 +17,10 @@
 $ python listup.py Thunderbird
 ```
 
-`output/` ディレクトリに、 `result.csv` と `result.xlsx` ができます。
+`output/` ディレクトリに、 `Thunderbird.csv` と `Thunderbird.xlsx` ができます。
 (References のURL が多すぎると Warning が出ますが気にしないでOKだと思います。)
+
+出力ファイル名を変更したい場合は、 `-o` オプションが使えます。
 
 また、
 

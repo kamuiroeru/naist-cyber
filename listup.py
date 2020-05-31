@@ -73,7 +73,7 @@ def create_parser() -> Namespace:
     parser = ArgumentParser(description='nvd のデータを抽出して表にまとめる')
 
     parser.add_argument('query', nargs='+', help='検索語句（スペース区切りで複数指定可能）')
-    parser.add_argument('--out', '-o', help='output file name', default='result')
+    parser.add_argument('--out', '-o', help='output file name', help="出力ファイル名(拡張子無し)の指定、未指定の場合は query で代用される")
 
     return parser.parse_args()
 
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     args = create_parser()
 
     query: List[str] = args.query
-    out: str = args.out
+    out: str = args.out if args.out else '__'.join(query).replace(' ', '_')
     l: List[CVE_Item] = []
     for q in query:
         print(q, ':')
