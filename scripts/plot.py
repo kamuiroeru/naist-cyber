@@ -6,6 +6,9 @@ ColorList = List[Union[str, Tuple[float]]]
 
 from collections import Counter
 from os.path import abspath, dirname, splitext, join as pjoin
+
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 
 plt.rcParams['font.size'] = 16

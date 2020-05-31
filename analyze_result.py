@@ -3,8 +3,11 @@ from collections import defaultdict, Counter
 import pandas as pd
 from argparse import ArgumentParser, Namespace
 from glob import glob
-import matplotlib.pyplot as plt
 from itertools import cycle
+
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
 
 from os.path import abspath, dirname, splitext, basename, join as pjoin
 from sys import path

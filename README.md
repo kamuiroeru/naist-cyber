@@ -5,6 +5,9 @@
     - requests
     - matplotlib
     - tqdm
+    - lxml
+    - openpyxl
+    - xlsxwriter
 - Internet Connection: CVE の検索と NIST CVD の Data feeds をダウンロードするために必要です。
 - 最低で 50MB 程度の空き領域: CVD の データベースを保存するために必要です。
     - csv と xlsx と pdf を保存するために 追加で 50MB ほどあると安心です。
