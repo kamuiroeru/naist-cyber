@@ -4,22 +4,7 @@
 !.gitignore
 !.vscode
 
-# srcフォルダだけ追加
-/scripts/src/*
-!/scripts/src/.gitkeep
-
-# outputフォルダだけ追加
-/output/*
-!/output/.gitkeep
-
-# pieフォルダだけ追加
-/pie/*
-!/pie/.gitkeep
-
 __pycache__
-
-result.csv
-result.xlsx
 
 # office系のキャッシュファイル
 ~$*
