@@ -104,7 +104,7 @@ def plot_pie_by_output():
     for year, counter in counted_y2c.items():
         vl, ll = split_data_label_from_counter(counter)
         cl = [cwe_id_to_color[label] for label in ll]
-        plot_pie(vl, ll, colors=cl, filename=year)
+        plot_pie(vl, ll, colors=cl, title=year, filename=year)
 
     # csv ファイルごとの集計
     for csv, df in zip(csv_list, dfs):
@@ -112,7 +112,7 @@ def plot_pie_by_output():
         _, counted_all_cwe = count_up_cwe(df)
         vl, ll = split_data_label_from_counter(counted_all_cwe)
         cl = [cwe_id_to_color[label] for label in ll]
-        plot_pie(vl, ll, colors=cl, filename=name)
+        plot_pie(vl, ll, colors=cl, title=name, filename=name)
 
 
 if __name__ == "__main__":

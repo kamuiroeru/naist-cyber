@@ -9,13 +9,14 @@ from os.path import abspath, dirname, splitext, join as pjoin
 import matplotlib.pyplot as plt
 
 plt.rcParams['font.size'] = 16
-OUTPUT_DIR = pjoin(dirname(abspath(__file__)), '..', 'pie')
+OUTPUT_DIR = pjoin(dirname(abspath(__file__)), '..', 'graph', 'pie')
 
 
 def plot_pie(
     values: ValueList,
     labels: LabelList,
     colors: ColorList = None,
+    title: str = None,
     filename: str = 'pie.pdf'
 ):
     """円グラフを作る
@@ -40,6 +41,7 @@ def plot_pie(
 
     plt.close()  # 初期化。繰り返し呼び出されることを考慮している。
 
+    total = sum(values)
     # グラフプロット
     plt.pie(
         values, labels=labels, counterclock=False, startangle=90,
@@ -47,9 +49,13 @@ def plot_pie(
         wedgeprops={
             'linewidth': 3,
             'edgecolor': 'white'
-        }
+        },
+        # autopct="%.1f%%", pctdistance=0.7,  # 比率を表示させたい場合コメントアウト
+        # autopct=lambda p: f'{p * total // 100:.0f}', pctdistance=0.7,  # 個数を表示させたい場合コメントアウト
     )
     plt.axis('equal')  # 真円になるように設定（おそらく不要）
+    if title is not None:
+        plt.title(title)
 
     # ファイルに出力
     plt.savefig(pjoin(OUTPUT_DIR, filename), bbox_inches='tight')
