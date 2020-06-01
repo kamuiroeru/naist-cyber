@@ -1,5 +1,6 @@
 from typing import List
 from pprint import pprint
+from uuid import uuid4
 
 class CVSS_V3:
     ENUM = {
@@ -103,3 +104,8 @@ class CVE_Item:
                         self.vulnerable_software_and_versions.extend(self.__parse_cpe(node['cpe_match']))
                     except KeyError as e:
                         pass
+
+        self.__id = self.id if self.id else str(uuid4())  # hashable にするための定数
+
+        def __hash__(self):
+            return self.__id

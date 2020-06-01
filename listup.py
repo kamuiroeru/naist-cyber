@@ -92,9 +92,10 @@ if __name__ == "__main__":
     if not l:
         print('[Warning] entries not found')
     else:
-        df = to_dataframe(l)
+        cve_ids = set(l)  # ID の重複を削除
+        df = to_dataframe(cve_ids)
         df.to_csv(pjoin(OUTPUT_DIR, f'{out}.csv'))
         with pd.ExcelWriter(pjoin(OUTPUT_DIR, f'{out}.xlsx'), engine='xlsxwriter') as excel:
             excel.book.add_format({'text_wrap': True})
             df.to_excel(excel)
-        print(f'output {len(l)} entries')
+        print(f'output {len(cve_ids)} entries')
