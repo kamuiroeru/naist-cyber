@@ -1,4 +1,6 @@
 from typing import List, Union
+import warnings
+warnings.simplefilter('ignore')
 import pandas as pd
 from argparse import ArgumentParser, Namespace
 
@@ -14,7 +16,7 @@ from scripts.search_nvd_records import (
     NVD, search_CVE_records
 )
 
-nvd = NVD()
+nvd = None
 OUTPUT_DIR = pjoin(SCRIPT_PATH, 'output')
 
 
@@ -27,6 +29,10 @@ def listup_records(query: str) -> List[CVE_Item]:
     Returns:
         List[CVE_Item] -- CVE_Item のリスト
     """
+
+    global nvd
+    if nvd is None:
+        nvd = NVD()
     cve_items = [nvd.get_item(cve_item) for cve_item in search_CVE_records(query)]
     return list(filter(lambda e:e, cve_items))  # None の要素を削除
 
