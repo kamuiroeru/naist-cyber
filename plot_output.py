@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union
 from collections import defaultdict, Counter
 import pandas as pd
 from argparse import ArgumentParser, Namespace
@@ -40,7 +40,7 @@ def count_up_cwe(
 
     for idx, record in df.iterrows():
         year: str = record.CVE_ID.split('-')[1]
-        cwes: List[str] = record.CWE.split('\n')
+        cwes: List[str] = record.CWE.split('|')
         year2cwes[year].extend(cwes)
         all_cwes.extend(cwes)
 
@@ -68,14 +68,74 @@ def split_data_label_from_counter(counter: Counter) -> [ValueList, LabelList]:
 
     return value_list, label_list
 
+
+# CWE の情報リンクのテンプレート
+template_cwe = 'https://cwe.mitre.org/data/definitions/{}.html'
+template_cwe_jvn = 'https://jvndb.jvn.jp/ja/cwe/CWE-{}.html'
+
+
+def export_cwe_info(cwes: List[Union[str, Tuple[str, int]]], out_path: str):
+    """CWEの詳細ページリンクを出力する .txt
+
+    Arguments:
+        cwes {List[Union[str, Tuple[str, int]]]} -- CWE-ID が入ったリスト, (cwe_id, 出現回数) の Tupleが入ったリストも可能
+        out_path {str} -- 出力先。 Ex. 'output/cwe_most_common_9.txt'
+    """
+
+    with open(out_path, 'w') as f:
+        for elem in cwes:
+            print(elem)
+            cwe = elem[0] if isinstance(elem, tuple) else elem
+            cwe_id = cwe.split('-')[1]
+            f.write(
+                str(elem) + '\n' \
+                + '    ' + template_cwe.format(cwe_id) + '\n' \
+                + '    ' + template_cwe_jvn.format(cwe_id) + '\n' \
+            )
+
+
 # 出現頻度上位の CWE に色付けする際の色
 tab10 = plt.get_cmap('tab10')
 top_color = [tab10(i) for i in list(range(7)) + list(range(8, 10))]  # tab10 から灰色を除いた 9 色
 gray = cycle(['#343d46','#4f5b66','#65737e','#a7adba','#c0c5ce'])  # 上位以外の色
 
-# CWE の情報リンクのテンプレート
-template_cwe = 'https://cwe.mitre.org/data/definitions/{}.html'
-template_cwe_jvn = 'https://jvndb.jvn.jp/ja/cwe/CWE-{}.html'
+
+def get_color_convertor(
+    cwe_id_to_count: dict,
+    ignore_noinfo_other: bool = True,
+    export_top9_detail: bool = False,
+) -> dict:
+    """CWE_ID ごとのグラフ表示色 を生成する。
+    出現頻度上位9こ には 特定の色を、それ以外には 5通りの濃淡を使い回す灰色を割り当てる。
+
+    Arguments:
+        cwe_id_2_count {dict} -- key: value = CWE_ID: 出現個数 となっている dict
+
+    Keyword Arguments:
+        ignore_noinfo_other {bool} -- 出現頻度上位に NVD-CWE-noinfo と NVD-CWE-other を含めない (default: {True})
+        export_top9_detail {bool} -- 出現頻度上位9項目の詳細を output/cwe_most_common_9.txt に吐き出す  (default: {False})
+    """
+
+    # 全ての項目をランダムに灰色にする（5色を使い回すので重複は出るが問題ない）
+    cwe_id_to_color = {key: next(gray) for key, _ in cwe_id_to_count.items()}
+
+    # 出現頻度上位9 を抽出する
+    most_common: List[Tuple[str, int]] = sorted(cwe_id_to_count.items(), key=lambda elem: elem[1], reverse=True)
+    if ignore_noinfo_other:
+        most_common11 = most_common[:9+2]  # noinfo と other が含まれてるかもしれないので余分に抽出
+        most_common9 = list(filter(lambda x: x[0] not in {'NVD-CWE-noinfo', 'NVD-CWE-Other'}, most_common11))[:9]
+    else:
+        most_common9 = most_common[:9]
+
+    for lc, elem in enumerate(most_common9):
+        # 割り当て
+        cwe_id = elem[0]
+        cwe_id_to_color[cwe_id] = top_color[lc]
+
+    if export_top9_detail:
+        export_cwe_info(most_common9)
+
+    return cwe_id_to_color
 
 
 def plot_pie_by_output():
@@ -87,24 +147,8 @@ def plot_pie_by_output():
 
     # 年ごとの集計
     counted_y2c, counted_all_cwe = count_up_cwe(df_concat)
-    ## 色を固定するための処理を入れる
-    ### 全ての項目をランダムに灰色にする（5色を使い回すので重複は出るが問題ない）
-    cwe_id_to_color = {key: next(gray) for key, _ in counted_all_cwe.items()}
-    ### 出現頻度 top 9 に、matplotlib 標準色を割り当てる（上書きする）
-    most_common_9: List[Tuple[str, int]] = counted_all_cwe.most_common(9)
-    with open(pjoin(SCRIPT_PATH, 'output', 'cwe_most_common_9.txt'), 'w') as f:
-        for lc, elem in enumerate(most_common_9):
-            # 上位 9 CWE を表示
-            cwe_id = elem[0].split('-')[1]
-            print(elem)
-            f.write(
-                str(elem) + '\n' \
-                + '    ' + template_cwe.format(cwe_id) + '\n' \
-                + '    ' + template_cwe_jvn.format(cwe_id) + '\n' \
-            )
-            # 割り当て
-            mc_cwe_id = elem[0]
-            cwe_id_to_color[mc_cwe_id] = top_color[lc]
+    ## 色を固定するための辞書を生成する
+    cwe_id_to_color = get_color_convertor(counted_all_cwe)
 
     for year, counter in counted_y2c.items():
         vl, ll = split_data_label_from_counter(counter)
@@ -120,7 +164,7 @@ def plot_pie_by_output():
         plot_pie(vl, ll, colors=cl, title=name, filename=name)
 
 
-def plot_yearwise_norm_stacked_bar_by_output():
+def plot_yearwise_norm_stacked_bar_by_output(ignore_noinfo_other: bool = True):
     """outputディレクトリにある csv （複数可） を 使って 100% 積み上げグラフを生成する。（年ごとのみ）
     """
 
@@ -142,6 +186,15 @@ def plot_yearwise_norm_stacked_bar_by_output():
 
     # CWE を出現頻度順に、年順にプロットするために DF をソート
     sort_index = pd.Series(counted_all_cwe).sort_values()[::-1]
+    if ignore_noinfo_other:
+        if 'NVD-CWE-noinfo' in sort_index:
+            nvd_cwe_noinfo = sort_index['NVD-CWE-noinfo']
+            sort_index = sort_index.drop('NVD-CWE-noinfo')
+            sort_index['NVD-CWE-noinfo'] = nvd_cwe_noinfo
+        if 'NVD-CWE-Other' in sort_index:
+            nvd_cwe_other = sort_index['NVD-CWE-Other']
+            sort_index = sort_index.drop('NVD-CWE-Other')
+            sort_index['NVD-CWE-Other'] = nvd_cwe_other
     df = df[sort_index.index]  # columns を降順でソート
     df = df.sort_index()  # records を 昇順（年代順）でソート
     df_norm = df_norm[sort_index.index]  # columns を降順でソート
@@ -167,7 +220,7 @@ def plot_yearwise_norm_stacked_bar_by_output():
     plt.savefig(pjoin(SCRIPT_PATH, 'graph', 'bar', 'yearwise_norm_stacked.pdf'), bbox_inches='tight')
 
 
-def plot_categorywise_norm_stacked_bar_by_output():
+def plot_categorywise_norm_stacked_bar_by_output(ignore_noinfo_other: bool = True):
     """outputディレクトリにある csv （複数可） を 使って 100% 積み上げグラフを生成する。（csvファイルごとのみ）
     """
 
@@ -190,6 +243,15 @@ def plot_categorywise_norm_stacked_bar_by_output():
 
     # CWE を出現頻度順に、年順にプロットするために DF をソート
     sort_index = pd.Series(counted_all_cwe).sort_values()[::-1]
+    if ignore_noinfo_other:
+        if 'NVD-CWE-noinfo' in sort_index:
+            nvd_cwe_noinfo = sort_index['NVD-CWE-noinfo']
+            sort_index = sort_index.drop('NVD-CWE-noinfo')
+            sort_index['NVD-CWE-noinfo'] = nvd_cwe_noinfo
+        if 'NVD-CWE-Other' in sort_index:
+            nvd_cwe_other = sort_index['NVD-CWE-Other']
+            sort_index = sort_index.drop('NVD-CWE-Other')
+            sort_index['NVD-CWE-Other'] = nvd_cwe_other
     df = df[sort_index.index]  # columns を降順でソート
     df = df.sort_index()  # records を 昇順（年代順）でソート
     df_norm = df_norm[sort_index.index]  # columns を降順でソート
@@ -215,6 +277,9 @@ def plot_categorywise_norm_stacked_bar_by_output():
     plt.savefig(pjoin(SCRIPT_PATH, 'graph', 'bar', 'categorywise_norm_stacked.pdf'), bbox_inches='tight')
 
 if __name__ == "__main__":
+    print('plotting pie ...')
     plot_pie_by_output()
+    print('plotting yearwise stacked bar ...')
     plot_yearwise_norm_stacked_bar_by_output()
+    print('plotting categorywise stacked bar ...')
     plot_categorywise_norm_stacked_bar_by_output()
