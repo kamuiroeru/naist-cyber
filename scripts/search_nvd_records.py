@@ -96,7 +96,7 @@ class NVD:
                 print('Loading NVD Data')
                 self.nvd = load_pickle_gzip(self.__dumpfile_path)
             else:
-                print('[Warning] nvd file is not found')
+                print('[Warning] NVD cache file is not found')
                 self.nvd = {}
 
     def get_item(self, cve_id: str) -> Union[CVE_Item, None]:

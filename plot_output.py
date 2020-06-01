@@ -133,7 +133,7 @@ def get_color_convertor(
         cwe_id_to_color[cwe_id] = top_color[lc]
 
     if export_top9_detail:
-        export_cwe_info(most_common9)
+        export_cwe_info(most_common9, pjoin(SCRIPT_PATH, 'output', 'most_common9.txt'))
 
     return cwe_id_to_color
 
@@ -148,7 +148,7 @@ def plot_pie_by_output():
     # 年ごとの集計
     counted_y2c, counted_all_cwe = count_up_cwe(df_concat)
     ## 色を固定するための辞書を生成する
-    cwe_id_to_color = get_color_convertor(counted_all_cwe)
+    cwe_id_to_color = get_color_convertor(counted_all_cwe, export_top9_detail=True)
 
     for year, counter in counted_y2c.items():
         vl, ll = split_data_label_from_counter(counter)
