@@ -28,7 +28,7 @@ $ python listup.py Thunderbird
 また、
 
 ```sh
-$ python analyze_result.py
+$ python plot_output.py
 ```
 
 を実行すると、 `graph/pie/` ディレクトリに年ごと、 CSV ごとの 円グラフ が、
