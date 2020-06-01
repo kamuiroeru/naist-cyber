@@ -13,10 +13,10 @@
             "args": ["Thunderbird"]
         },
         {
-            "name": "analyze output",
+            "name": "plot_output.py",
             "type": "python",
             "request": "launch",
-            "program": "analyze_result.py",
+            "program": "plot_output.py",
             "console": "integratedTerminal"
         }
     ]
