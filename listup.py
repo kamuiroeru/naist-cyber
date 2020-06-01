@@ -16,11 +16,10 @@ from scripts.search_nvd_records import (
     NVD, search_CVE_records
 )
 
-nvd = None
 OUTPUT_DIR = pjoin(SCRIPT_PATH, 'output')
 
 
-def listup_records(query: str) -> List[CVE_Item]:
+def listup_records(query: str, nvd: NVD) -> List[CVE_Item]:
     """投げられたクエリを検索し、CVE_Item のリストを返す
 
     Arguments:
@@ -30,9 +29,6 @@ def listup_records(query: str) -> List[CVE_Item]:
         List[CVE_Item] -- CVE_Item のリスト
     """
 
-    global nvd
-    if nvd is None:
-        nvd = NVD()
     cve_items = [nvd.get_item(cve_item) for cve_item in search_CVE_records(query)]
     return list(filter(lambda e:e, cve_items))  # None の要素を削除
 
@@ -56,9 +52,9 @@ def pickup_schema(cve_item: CVE_Item) -> dict:
         'Overview': cve_item.overview,
         'CVSS_V3': cvss_v3 if cvss_v3 else '',
         'CVSS_V2': cvss_v2 if cvss_v2 else '',
-        'References': '\n'.join(cve_item.references),
-        'vulnerable_software_versions': '\n'.join(cve_item.vulnerable_software_and_versions),
-        'CWE': '\n'.join(cve_item.vulnerability_type),
+        'References': '|'.join(cve_item.references),
+        'vulnerable_software_versions': '|'.join(cve_item.vulnerable_software_and_versions),
+        'CWE': '|'.join(cve_item.vulnerability_type),
     }
 
 
@@ -80,6 +76,7 @@ def create_parser() -> Namespace:
 
     parser.add_argument('query', nargs='+', help='検索語句（スペース区切りで複数指定可能）')
     parser.add_argument('--out', '-o', help='出力ファイル名(拡張子無し)の指定、未指定の場合は query で代用される')
+    parser.add_argument('--update', '-u', action='store_true', help='処理前に NVD データキャッシュファイルをアップデートする')
 
     return parser.parse_args()
 
@@ -89,10 +86,14 @@ if __name__ == "__main__":
 
     query: List[str] = args.query
     out: str = args.out if args.out else '__'.join(query).replace(' ', '_')
+    update: bool = args.update
+
+    nvd = NVD(update)
+
     l: List[CVE_Item] = []
     for q in query:
         print(q, ':')
-        l.extend(listup_records(q))
+        l.extend(listup_records(q, nvd))
         print('\r', '    done.', ' ' * 100)
 
     if not l:
