@@ -2,6 +2,7 @@ from typing import List
 from pprint import pprint
 from uuid import uuid4
 
+
 class CVSS_V3:
     ENUM = {
         'AV': {'N': 'NETWORK', 'A': 'ADJACENT_NETWORK', 'L': 'LOCAL', 'P': 'PHYSICAL'},
@@ -109,3 +110,17 @@ class CVE_Item:
 
         def __hash__(self):
             return self.__id
+
+
+class CAPEC_Item:
+    def __init__(self, raw_dict: dict):
+        self.id: str = raw_dict.get('id', '')
+        self.name: str = raw_dict.get('name', '')
+        self.related_weaknesses: List[str] = raw_dict.get('related_weaknesses', [])
+        self.__id = self.id if self.id else str(uuid4())
+
+    def __hash__(self):
+        return self.__id
+
+    def __str__(self):
+        return f'{self.id}\n{self.name}\n{self.related_weaknesses}'

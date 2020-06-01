@@ -18,6 +18,13 @@
             "request": "launch",
             "program": "plot_output.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "search_attack.py",
+            "type": "python",
+            "request": "launch",
+            "program": "search_attack.py",
+            "console": "integratedTerminal"
         }
     ]
 }
