@@ -20,7 +20,7 @@
 $ python listup.py Thunderbird
 ```
 
-`output/` ディレクトリに、 `Thunderbird.csv` と `Thunderbird.xlsx` ができます。
+[`output/`](output/) ディレクトリに、 `Thunderbird.csv` と `Thunderbird.xlsx` ができます。
 (References のURL が多すぎると Warning が出ますが気にしないでOKだと思います。)
 
 出力ファイル名を変更したい場合は、 `-o` オプションが使えます。
@@ -31,8 +31,16 @@ $ python listup.py Thunderbird
 $ python plot_output.py
 ```
 
-を実行すると、 `graph/pie/` ディレクトリに年ごと、 CSV ごとの 円グラフ が、
-`graph/bar/` ディレクトリに年ごと、 CSV ごとの 積み上げ棒グラフ ができます。
+を実行すると、 [`graph/pie/`](graph/pie/) ディレクトリに年ごと、 CSV ごとの 円グラフ が、
+[`graph/bar/`](graph/bar/) ディレクトリに年ごと、 CSV ごとの 積み上げ棒グラフ ができます。
 これらのグラフでは、出現頻度 TOP9 の CWE が色付けされており、
 これらについての詳細（CWE_ID, 出現回数、CWE詳細ページのリンク英語版&日本語版）は
-`output/cwe_most_common_9.txt` に出力されます。
+[`output/cwe_most_common_9.txt`](output/cwe_most_common_9.txt) に出力されます。
+
+さらに、
+
+```sh
+$ python pickup_top10.py
+```
+
+を実行すると CVSS のスコアで順位づけしたTOP10が `output/vul_top10.tsv` に出力されます。順位づけは、 CVSS_V3/V2 baseScore の和 でソートし、同じ値の場合は CVSS_V3 baseScore でソートして求めています。（[`pickup_top10.py`](pickup_top10.py) の `sort_function` を参照）
