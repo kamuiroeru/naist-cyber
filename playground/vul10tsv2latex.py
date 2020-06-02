@@ -37,10 +37,14 @@ vul_top10_tsv = pd.read_table(pjoin(SCRIPT_PATH, '..', 'output', 'vul_top10.tsv'
 cve_latex_list: List[str] = []
 for index, elem in vul_top10_tsv.iterrows():
     cwes: List[str] = elem['CWE'].split('|')
-    cwe_ids = [cwe.split('-')[1] for cwe in cwes]
+    cwe_ids = []
     capec_ids = []
-    for cwe_id in cwe_ids:
-        capec_ids.extend(extract_ids(capec.get_capec_items_related_cwe(cwe_id)))
+    for cwe in cwes:
+        if len(cwe.split('-')) == 3:
+            cwe_id = cwe
+        else:
+            cwe_id = cwe.split('-')[1]
+            capec_ids.extend(extract_ids(capec.get_capec_items_related_cwe(cwe_id)))
     capec_ids = sorted(set(capec_ids), key=lambda x: int(x))
     paste_dict = {
         'CVE': elem['CVE'],
