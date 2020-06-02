@@ -211,12 +211,16 @@ def plot_yearwise_norm_stacked_bar_by_output(ignore_noinfo_other: bool = True):
     legend_handles = plot_return.legend().legendHandles[:9]
     ## 凡例の設定を上書き
     plt.legend(legend_handles[::-1], legend_texts[::-1], bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0)
+    plt.xlabel('Year')
+    plt.ylabel('Gross of CVE')
     plt.savefig(pjoin(SCRIPT_PATH, 'graph', 'bar', 'yearwise_stacked.pdf'), bbox_inches='tight')
 
     # 100% 積み上げグラフのプロット
     plt.close()  # 念の為初期化
     df_norm.plot.bar(stacked=True, color=colors)
     plt.legend(legend_handles[::-1], legend_texts[::-1], bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0)
+    plt.xlabel('Year')
+    plt.ylabel('Rate of CVE')
     plt.savefig(pjoin(SCRIPT_PATH, 'graph', 'bar', 'yearwise_norm_stacked.pdf'), bbox_inches='tight')
 
 
@@ -268,12 +272,16 @@ def plot_categorywise_norm_stacked_bar_by_output(ignore_noinfo_other: bool = Tru
     legend_handles = plot_return.legend().legendHandles[:9]
     ## 凡例の設定を上書き
     plt.legend(legend_handles[::-1], legend_texts[::-1], bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0)
+    plt.xlabel('Category')
+    plt.ylabel('Gross of CVE')
     plt.savefig(pjoin(SCRIPT_PATH, 'graph', 'bar', 'categorywise_stacked.pdf'), bbox_inches='tight')
 
     # 100% 積み上げグラフのプロット
     plt.close()  # 念の為初期化
     df_norm.plot.bar(stacked=True, color=colors)
     plt.legend(legend_handles[::-1], legend_texts[::-1], bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0)
+    plt.xlabel('Category')
+    plt.ylabel('Rate of CVE')
     plt.savefig(pjoin(SCRIPT_PATH, 'graph', 'bar', 'categorywise_norm_stacked.pdf'), bbox_inches='tight')
 
 if __name__ == "__main__":
