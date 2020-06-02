@@ -6,8 +6,8 @@
 - CVSS の値をもとに、 脆弱性を 10個 ピックアップする (Question 3.2)
 - CAPEC と CWE の関係を調査する
 
-![Rate of CVE by Year](https://github.com/kamuiroeru/naist-cyber/blob/example/graph/bar/yearwise_norm_stacked.pdf?raw=true)
-![Rate of CVE by Category](https://github.com/kamuiroeru/naist-cyber/blob/example/graph/bar/categorywise_norm_stacked.pdf?raw=true)
+![Rate of CVE by Year](https://github.com/kamuiroeru/naist-cyber/blob/example/graph/bar/yearwise_norm_stacked.svg?raw=true)
+![Rate of CVE by Category](https://github.com/kamuiroeru/naist-cyber/blob/example/graph/bar/categorywise_norm_stacked.svg?raw=true)
 
 ## requirements
 - python 3.6>
