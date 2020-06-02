@@ -41,7 +41,7 @@ def to_dataframe(cve_items: List[CVE_Item]) -> pd.DataFrame:
         cvss_v3: CVSS_V3 = elem.impact['V3']
         cvss_v2: CVSS_V2 = elem.impact['V2']
         d = {
-            'CVE_ID': cve_id,
+            'CVE': cve_id,
             'Description': description.replace('\n', '<br>'),
             'CVSS_V3': cvss_v3.baseScore,
             'CVSS_V2': cvss_v2.baseScore,
