@@ -133,7 +133,7 @@ def get_color_convertor(
         cwe_id_to_color[cwe_id] = top_color[lc]
 
     if export_top9_detail:
-        export_cwe_info(most_common9, pjoin(SCRIPT_PATH, 'output', 'most_common9.txt'))
+        export_cwe_info(most_common9, pjoin(SCRIPT_PATH, 'output', 'cwe_most_common_9.txt'))
 
     return cwe_id_to_color
 
