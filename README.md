@@ -31,7 +31,9 @@
 $ python listup.py Thunderbird
 ```
 
-[`output/`](output/) ディレクトリに、 `Thunderbird.csv` と `Thunderbird.xlsx` ができます。
+[`output/`](https://github.com/kamuiroeru/naist-cyber/tree/example/output)
+ディレクトリに、 `Thunderbird.csv` と `Thunderbird.xlsx` ができます。
+
 (References のURL が多すぎると Warning が出ますが気にしないでOKだと思います。)
 
 出力ファイル名を変更したい場合は、 `-o` オプションが使えます。
@@ -42,11 +44,11 @@ $ python listup.py Thunderbird
 $ python plot_output.py
 ```
 
-を実行すると、 [`graph/pie/`](graph/pie/) ディレクトリに年ごと、 CSV ごとの 円グラフ が、
-[`graph/bar/`](graph/bar/) ディレクトリに年ごと、 CSV ごとの 積み上げ棒グラフ ができます。
+を実行すると、 [`graph/pie/`](https://github.com/kamuiroeru/naist-cyber/tree/example/graph/pie) ディレクトリに年ごと、 CSV ごとの 円グラフ が、
+[`graph/bar/`](https://github.com/kamuiroeru/naist-cyber/tree/example/graph/bar) ディレクトリに年ごと、 CSV ごとの 積み上げ棒グラフ ができます。
 これらのグラフでは、出現頻度 TOP9 の CWE が色付けされており、
 これらについての詳細（CWE_ID, 出現回数、CWE詳細ページのリンク英語版&日本語版）は
-[`output/cwe_most_common_9.txt`](output/cwe_most_common_9.txt) に出力されます。
+[`output/cwe_most_common_9.txt`](https://github.com/kamuiroeru/naist-cyber/blob/example/output/most_common9.txt) に出力されます。
 
 ### CVSSのスコア順に top 10 をピックアップ
 
