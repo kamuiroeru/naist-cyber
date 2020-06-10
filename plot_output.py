@@ -4,6 +4,7 @@ import pandas as pd
 from argparse import ArgumentParser, Namespace
 from glob import glob
 from itertools import cycle
+from math import isnan
 
 import matplotlib as mpl
 mpl.use('Agg')
@@ -40,7 +41,10 @@ def count_up_cwe(
 
     for idx, record in df.iterrows():
         year: str = record.CVE_ID.split('-')[1]
-        cwes: List[str] = record.CWE.split('|')
+        if isinstance(record.CWE, float):  # nan の場合があるので、除去
+            cwes = []
+        else:
+            cwes: List[str] = record.CWE.split('|')
         year2cwes[year].extend(cwes)
         all_cwes.extend(cwes)
 

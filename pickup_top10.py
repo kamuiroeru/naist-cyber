@@ -23,8 +23,8 @@ df_concat = df_concat.fillna(0)
 def sort_function(elem: CVE_Item) -> tuple:
     """CVE_Item のリスト をソートするための関数
     """
-    cvss_v3: CVSS_V3 = elem.impact['V3']
-    cvss_v2: CVSS_V2 = elem.impact['V2']
+    cvss_v3: CVSS_V3 = elem.impact.get('V3', CVSS_V3({}))
+    cvss_v2: CVSS_V2 = elem.impact.get('V2', CVSS_V3({}))
 
     # ソートする順番、- を付けて降順ソートにしている
     tier1 = -(cvss_v3.baseScore + cvss_v2.baseScore)
@@ -38,8 +38,8 @@ def to_dataframe(cve_items: List[CVE_Item]) -> pd.DataFrame:
     for elem in cve_items:
         cve_id = elem.id
         description = elem.overview
-        cvss_v3: CVSS_V3 = elem.impact['V3']
-        cvss_v2: CVSS_V2 = elem.impact['V2']
+        cvss_v3: CVSS_V3 = elem.impact.get('V3', CVSS_V3({}))
+        cvss_v2: CVSS_V2 = elem.impact.get('V2', CVSS_V3({}))
         d = {
             'CVE': cve_id,
             'Description': description.replace('\n', '<br>'),
