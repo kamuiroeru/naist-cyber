@@ -40,8 +40,8 @@ def count_up_cwe(
     all_cwes: List[str] = []
 
     for idx, record in df.iterrows():
-        year: str = record.CVE_ID.split('-')[1]
-        if isinstance(record.CWE, float):  # nan の場合があるので、除去
+        year: str = record[cve_id_col_name].split('-')[1]
+        if isinstance(record[cwe_col_name], float):  # nan の場合があるので、除去
             cwes = []
         else:
             cwes: List[str] = record.CWE.split('|')
