@@ -38,7 +38,7 @@ $ python listup.py Thunderbird
 
 出力ファイル名を変更したい場合は、 `-o` オプションが使えます。
 
-### CWEの集計をプロット
+### CWEとAttackVectorの集計をプロット
 
 ```sh
 $ python plot_output.py
